@@ -1,6 +1,6 @@
 # rebar3_bitbake
 
-Generate BitBake recipes utilizing the classes from [meta-erlang](https://github.com/joaohf/meta-erlang) Yocto Project/OE layer.
+Generate BitBake recipes utilizing the classes from [meta-erlang](https://github.com/meta-erlang/meta-erlang) Yocto Project/OE layer.
 
 
 ## Use
@@ -24,4 +24,4 @@ Important: make sure that the existing application has release configuration. Th
 
 ## License
 
-[Apache 2 License](https://github.com/joaohf/edocmermaid/LICENSE)
+[Apache 2 License](https://github.com/meta-erlang/rebar3_bitbake/LICENSE)
