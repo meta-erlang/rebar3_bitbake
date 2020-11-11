@@ -1,7 +1,10 @@
 # rebar3_bitbake
 
+[![Hex.pm](https://img.shields.io/hexpm/v/rebar3_bitbake.svg)](https://hex.pm/packages/rebar3_bitbake)
+
 Generate BitBake recipes utilizing the classes from [meta-erlang](https://github.com/meta-erlang/meta-erlang) Yocto Project/OE layer.
 
+Check out the [meta-erlang documentation](https://meta-erlang.github.io) to get a full picture about how to use it.
 
 ## Use
 

@@ -218,23 +218,38 @@ git_ref(Dir) ->
     Dir :: file:name_all(),
     Uri :: uri().
 src_uri(Dir) ->
+    ReOpts = [{capture, [host, path], list}, unicode],
     ShOpts = [{cd, Dir}],
 
     {ok, ScpUrl} = rebar_utils:sh("git config --get remote.origin.url", ShOpts),
-
-    Url =
-        case re:run(ScpUrl, ?SCP_PATTERN, [{capture, [host], list}, unicode]) of
-            {match, [Host]} ->
-                rebar_string:trim(Host, both, "\n");
-            nomatch ->
-                rebar_api:abort("Getting url for git repo failed in ~ts. ", [Dir])
-        end,
+    Url = rebar_string:trim(ScpUrl, both, "\n"),
 
     {ok, ScpBranch} = rebar_utils:sh("git rev-parse --abbrev-ref HEAD", ShOpts),
-
     Branch = rebar_string:trim(ScpBranch, both, "\n"),
 
-    "git://" ++ Url ++ ";branch=" ++ Branch.
+    Patterns = [
+        "\\A(?<proto>[^@]+)://(?<host>[^:]+)\\z",
+        "\\A(?<username>[^@]+)@(?<host>[^:]+):(?<path>.+)\\z"
+    ],
+
+    Matches = [re:run(Url, Pattern, ReOpts) || Pattern <- Patterns],
+
+    L = lists:filter(
+        fun
+            (nomatch) -> false;
+            (_) -> true
+        end,
+        Matches
+    ),
+
+    case L of
+        [] ->
+            rebar_api:abort("Getting url for git repo failed in ~ts. ", [Dir]);
+        [{match, [Host]} | _] ->
+            "git://" ++ Host ++ ";branch=" ++ Branch;
+        [{match, [Host, Path]} | _] ->
+            "git://" ++ Host ++ "/" ++ Path ++ ";branch=" ++ Branch
+    end.
 
 -spec check_release_presence(State) -> Presence | no_return() when
     State :: rebar_state:t(),
